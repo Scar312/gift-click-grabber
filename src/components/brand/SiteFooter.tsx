@@ -37,7 +37,26 @@ export function SiteFooter() {
             <h4 className="text-sm font-semibold uppercase tracking-widest text-gold">Contact</h4>
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-2"><Mail className="mt-0.5 h-4 w-4 text-gold" /> tochiumezinwa@gmail.com</li>
-              <li className="flex items-start gap-2"><Phone className="mt-0.5 h-4 w-4 text-gold" /> +2348038385255</li>
+              <li className="flex items-start gap-2">
+                <Phone className="mt-0.5 h-4 w-4 text-gold" />
+                <a
+                  href="https://wa.link/xyv3dm"
+                  onClick={(e) => { e.preventDefault(); window.location.href = "https://wa.link/xyv3dm"; }}
+                  className="hover:text-gold hover:underline"
+                >
+                  +2348038385255
+                </a>
+              </li>
+              <li className="flex items-start gap-2">
+                <Phone className="mt-0.5 h-4 w-4 text-gold" />
+                <a
+                  href="https://wa.link/pfmaxr"
+                  onClick={(e) => { e.preventDefault(); window.location.href = "https://wa.link/pfmaxr"; }}
+                  className="hover:text-gold hover:underline"
+                >
+                  +44 7796 381745
+                </a>
+              </li>
               <li className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 text-gold" /> Lagos, Nigeria</li>
             </ul>
           </div>

@@ -1,7 +1,7 @@
 import { SiteLayout } from "@/components/brand/SiteLayout";
 
 const steps = [
-  { n: "01", t: "Register with \u20a62,500", d: "Pay the one-time registration fee to become an official Treasure Hunter and unlock access to all plans." },
+  { n: "01", t: "Register with ₦2,500", d: "Pay the one-time registration fee to become an official Treasure Hunter and unlock access to all plans." },
   { n: "02", t: "Choose Your Plan", d: "Pick a rank (Master, Chief, Odogwu, Ijele) or a cash savings plan (Plan A or B) that matches your goals." },
   { n: "03", t: "Pay Outright or Installmentally", d: "Pay your full investment up front, or spread payments across monthly installments. Late payments before the 25th of each month avoid the 40% penalty fee." },
   { n: "04", t: "Refer & Unlock Full Package", d: "Refer at least one Hunter in your rank or above to unlock the full premium reward package for your tier." },

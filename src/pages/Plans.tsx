@@ -15,7 +15,7 @@ export default function Plans() {
           {RANKS.map((r) => (
             <div key={r.id} className="rounded-2xl border border-gold/15 bg-card/60 p-6 backdrop-blur transition-all hover:border-gold/40 hover:shadow-gold">
               <h3 className="font-display text-xl">{r.name}</h3>
-              <div className="mt-2 font-display text-3xl text-gradient-gold">{"\u20a6" + r.price.toLocaleString()}</div>
+              <div className="mt-2 font-display text-3xl text-gradient-gold">{"₦" + r.price.toLocaleString()}</div>
               <div className="mt-5 text-[11px] font-semibold uppercase tracking-widest text-gold">With Referral</div>
               <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
                 {r.with.map((b) => <li key={b} className="flex gap-1.5"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" />{b}</li>)}

@@ -35,7 +35,7 @@ export default function Dashboard() {
 
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {[
-            { i: Wallet, t: "Wallet Balance", v: "\u20a60" },
+            { i: Wallet, t: "Wallet Balance", v: "₦0" },
             { i: TrendingUp, t: "Active Plan", v: user.rank || "Not selected" },
             { i: Award, t: "Member Since", v: new Date(user.createdAt).toLocaleDateString() },
           ].map(({ i: Icon, t, v }) => (

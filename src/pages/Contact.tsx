@@ -22,14 +22,25 @@ export default function Contact() {
           <div className="space-y-4 sm:space-y-5">
             {[
               { i: Mail, t: "Email", v: "tochiumezinwa@gmail.com" },
-              { i: Phone, t: "Phone", v: "+2348038385255" },
+              { i: Phone, t: "Phone", v: "+2348038385255", link: "https://wa.link/xyv3dm" },
+              { i: Phone, t: "Phone", v: "+44 7796 381745", link: "https://wa.link/pfmaxr" },
               { i: MapPin, t: "Office", v: "Lagos, Nigeria" },
-            ].map(({ i: Icon, t, v }) => (
-              <div key={t} className="flex items-start gap-4 rounded-2xl border border-gold/15 bg-card/60 p-4 sm:p-5 backdrop-blur">
+            ].map(({ i: Icon, t, v, link }) => (
+              <div key={v} className="flex items-start gap-4 rounded-2xl border border-gold/15 bg-card/60 p-4 sm:p-5 backdrop-blur">
                 <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gold/10 text-gold ring-1 ring-gold/30"><Icon className="h-5 w-5" /></div>
                 <div className="min-w-0">
                   <div className="text-xs uppercase tracking-widest text-muted-foreground">{t}</div>
-                  <div className="mt-0.5 break-words text-foreground">{v}</div>
+                  {link ? (
+                    <a
+                      href={link}
+                      onClick={(e) => { e.preventDefault(); window.location.href = link; }}
+                      className="mt-0.5 block break-words text-foreground hover:text-gold hover:underline"
+                    >
+                      {v}
+                    </a>
+                  ) : (
+                    <div className="mt-0.5 break-words text-foreground">{v}</div>
+                  )}
                 </div>
               </div>
             ))}
