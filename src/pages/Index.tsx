@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-const fmtN = (n: number) => "\u20a6" + n.toLocaleString();
+const fmtN = (n: number) => "₦" + n.toLocaleString();
 
 function SectionEyebrow({ children }: { children: React.ReactNode }) {
   return (
@@ -37,7 +37,7 @@ function Hero() {
             </h1>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               Treasure Hunt Ventures is a premium savings & food-reward investment community.
-              Register from <span className="text-gold font-semibold">\u20a62,500</span>, choose your rank or savings plan, and watch your money work for you.
+              Register from <span className="text-gold font-semibold">₦2,500</span>, choose your rank or savings plan, and watch your money work for you.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/signup" className="group inline-flex items-center gap-2 rounded-full bg-gradient-gold px-7 py-3.5 text-sm font-semibold text-navy-deep shadow-gold transition-transform hover:scale-[1.03]">
@@ -59,7 +59,7 @@ function Hero() {
               <img src={heroImg} alt="Treasure chest with gold and naira notes" className="rounded-3xl border border-gold/20 shadow-glow" />
               <div className="absolute -bottom-6 -left-4 rounded-2xl border border-gold/30 bg-card/90 px-4 py-3 backdrop-blur-xl shadow-gold">
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Total Payout</div>
-                <div className="font-display text-xl text-gradient-gold">\u20a66,500,000</div>
+                <div className="font-display text-xl text-gradient-gold">₦6,500,000</div>
               </div>
               <div className="absolute -top-4 -right-4 rounded-2xl border border-gold/30 bg-card/90 px-4 py-3 backdrop-blur-xl shadow-gold">
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Interest</div>
@@ -75,7 +75,7 @@ function Hero() {
 
 function Stats() {
   const items = [
-    { v: "\u20a62.4B+", l: "Disbursed in Rewards" },
+    { v: "₦2.4B+", l: "Disbursed in Rewards" },
     { v: "12,000+", l: "Active Treasure Hunters" },
     { v: "25%", l: "Max Interest Rate" },
     { v: "11 mo", l: "Reward Cycle" },
@@ -232,7 +232,7 @@ function SavingsPlansSection() {
 
 function HowItWorks() {
   const steps = [
-    { n: "01", t: "Register", d: "Sign up and pay the one-time \u20a62,500 registration fee to become an official Treasure Hunter." },
+    { n: "01", t: "Register", d: "Sign up and pay the one-time ₦2,500 registration fee to become an official Treasure Hunter." },
     { n: "02", t: "Choose Your Plan", d: "Pick a rank (Master, Chief, Odogwu, Ijele) or a savings plan that fits your goals." },
     { n: "03", t: "Save Monthly", d: "Pay outright or in installments. Late payments before the 25th of each month avoid penalties." },
     { n: "04", t: "Get Rewarded", d: "Receive your food package or interest payout at the end of your cycle. Eat well. Earn big." },
@@ -267,8 +267,8 @@ function Benefits() {
     { i: TrendingUp, t: "Guaranteed Returns", d: "Earn up to 25% interest or food rewards worth more than your contribution." },
     { i: Users, t: "Referral Bonuses", d: "Refer Hunters to unlock the full premium reward package for your rank." },
     { i: Wallet, t: "Flexible Payments", d: "Pay outright or spread payments monthly. You stay in control of your cash flow." },
-    { i: Award, t: "Rank Migration", d: "Upgrade to a higher rank anytime with a small \u20a65,000 migration fee." },
-    { i: Sparkles, t: "Anniversary Promos", d: "Special 30% interest boost for savings of \u20a6500,000+ during anniversary windows." },
+    { i: Award, t: "Rank Migration", d: "Upgrade to a higher rank anytime with a small ₦5,000 migration fee." },
+    { i: Sparkles, t: "Anniversary Promos", d: "Special 30% interest boost for savings of ₦500,000+ during anniversary windows." },
   ];
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
@@ -296,7 +296,7 @@ function Benefits() {
 function Testimonials() {
   const t = [
     { n: "Adaeze O.", r: "Ijele Hunter", q: "I received my full food package on time — 4 bags of rice, yam, semo, everything. Best decision I made this year.", rt: 5 },
-    { n: "Tunde A.", r: "Plan B Saver", q: "Earned 25% interest on my \u20a6300,000. The team was transparent throughout the entire cycle.", rt: 5 },
+    { n: "Tunde A.", r: "Plan B Saver", q: "Earned 25% interest on my ₦300,000. The team was transparent throughout the entire cycle.", rt: 5 },
     { n: "Chinaza E.", r: "Chief Hunter", q: "I referred two friends and unlocked the full referral package. Truly rewarding community.", rt: 5 },
   ];
   return (
@@ -374,7 +374,7 @@ function CTA() {
           Ready to <span className="text-gradient-gold">unearth your treasure?</span>
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-          Join thousands of smart investors. Register today for just \u20a62,500 and start your reward journey.
+          Join thousands of smart investors. Register today for just ₦2,500 and start your reward journey.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link to="/signup" className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-8 py-3.5 text-sm font-semibold text-navy-deep shadow-gold transition-transform hover:scale-[1.03]">
