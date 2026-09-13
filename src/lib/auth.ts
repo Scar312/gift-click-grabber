@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export type User = {
   id: string;
@@ -6,78 +7,88 @@ export type User = {
   fullName: string;
   email: string;
   phone?: string;
-  rank?: string;
+  dateOfBirth?: string;
+  avatarPath?: string;
   createdAt: string;
 };
 
-const KEY_USERS = "thv.users";
-const KEY_SESSION = "thv.session";
+export type AuthState = { user: User | null; loading: boolean };
 
-function load<T>(k: string, fb: T): T {
-  if (typeof window === "undefined") return fb;
-  try { return JSON.parse(localStorage.getItem(k) || "") as T; } catch { return fb; }
-}
-function save(k: string, v: unknown) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(k, JSON.stringify(v));
-}
-function genAccountId() {
-  const n = Math.floor(100000 + Math.random() * 900000);
-  return `THV-${n}`;
+async function loadCurrentUser(): Promise<User | null> {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) return null;
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("account_id, full_name, phone, date_of_birth, avatar_path, created_at")
+    .eq("id", user.id)
+    .single();
+  if (profileError || !profile) return null;
+  return {
+    id: user.id,
+    accountId: profile.account_id,
+    fullName: profile.full_name,
+    email: user.email ?? "",
+    phone: profile.phone ?? undefined,
+    dateOfBirth: profile.date_of_birth ?? undefined,
+    avatarPath: profile.avatar_path ?? undefined,
+    createdAt: profile.created_at,
+  };
 }
 
 export const auth = {
-  current(): User | null {
-    return load<User | null>(KEY_SESSION, null);
-  },
-  signup(input: { fullName: string; email: string; password: string; phone?: string }): User {
-    const users = load<(User & { password: string })[]>(KEY_USERS, []);
-    if (users.find((u) => u.email.toLowerCase() === input.email.toLowerCase())) {
-      throw new Error("An account with this email already exists.");
-    }
-    const user: User & { password: string } = {
-      id: crypto.randomUUID(),
-      accountId: genAccountId(),
-      fullName: input.fullName,
+  current: loadCurrentUser,
+  async signup(input: { fullName: string; email: string; password: string; phone?: string }) {
+    return supabase.auth.signUp({
       email: input.email,
-      phone: input.phone,
-      createdAt: new Date().toISOString(),
       password: input.password,
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: { full_name: input.fullName, phone: input.phone ?? "" },
+      },
+    });
+  },
+  async login(email: string, password: string) {
+    return supabase.auth.signInWithPassword({ email, password });
+  },
+  async logout() {
+    await supabase.auth.signOut();
+  },
+  async updateProfile(input: { fullName: string; phone?: string; dateOfBirth?: string; avatar?: File }) {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) throw new Error("Please sign in again.");
+    let avatarPath: string | undefined;
+    if (input.avatar) {
+      if (!input.avatar.type.startsWith("image/")) throw new Error("Please choose an image file.");
+      const extension = input.avatar.name.split(".").pop()?.toLowerCase() || "jpg";
+      avatarPath = `${user.id}/avatar-${Date.now()}.${extension}`;
+      const { error: uploadError } = await supabase.storage.from("profile-images").upload(avatarPath, input.avatar);
+      if (uploadError) throw uploadError;
+    }
+    const changes: { full_name: string; phone: string | null; date_of_birth: string | null; avatar_path?: string } = {
+      full_name: input.fullName,
+      phone: input.phone || null,
+      date_of_birth: input.dateOfBirth || null,
     };
-    users.push(user);
-    save(KEY_USERS, users);
-    const { password: _p, ...session } = user;
-    save(KEY_SESSION, session);
-    window.dispatchEvent(new Event("thv-auth"));
-    return session;
-  },
-  login(email: string, password: string): User {
-    const users = load<(User & { password: string })[]>(KEY_USERS, []);
-    const u = users.find((x) => x.email.toLowerCase() === email.toLowerCase() && x.password === password);
-    if (!u) throw new Error("Invalid email or password.");
-    const { password: _p, ...session } = u;
-    save(KEY_SESSION, session);
-    window.dispatchEvent(new Event("thv-auth"));
-    return session;
-  },
-  logout() {
-    if (typeof window === "undefined") return;
-    localStorage.removeItem(KEY_SESSION);
-    window.dispatchEvent(new Event("thv-auth"));
+    if (avatarPath) changes.avatar_path = avatarPath;
+    const { error } = await supabase.from("profiles").update(changes).eq("id", user.id);
+    if (error) throw error;
   },
 };
 
-export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
+export function useAuth(): AuthState {
+  const [state, setState] = useState<AuthState>({ user: null, loading: true });
   useEffect(() => {
-    setUser(auth.current());
-    const h = () => setUser(auth.current());
-    window.addEventListener("thv-auth", h);
-    window.addEventListener("storage", h);
+    let active = true;
+    const refresh = async () => {
+      const user = await loadCurrentUser();
+      if (active) setState({ user, loading: false });
+    };
+    void refresh();
+    const { data: listener } = supabase.auth.onAuthStateChange(() => { void refresh(); });
     return () => {
-      window.removeEventListener("thv-auth", h);
-      window.removeEventListener("storage", h);
+      active = false;
+      listener.subscription.unsubscribe();
     };
   }, []);
-  return user;
+  return state;
 }
