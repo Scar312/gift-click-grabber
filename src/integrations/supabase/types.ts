@@ -14,7 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      payment_submissions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          payment_type: string
+          plan_id: string
+          plan_name: string
+          proof_path: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          payment_type: string
+          plan_id: string
+          plan_name: string
+          proof_path: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          payment_type?: string
+          plan_id?: string
+          plan_name?: string
+          proof_path?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          account_id: string
+          avatar_path: string | null
+          created_at: string
+          date_of_birth: string | null
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          avatar_path?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          full_name?: string
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          avatar_path?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
