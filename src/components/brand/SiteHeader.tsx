@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Menu, X, LogIn, UserPlus, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogIn, UserPlus, LayoutDashboard, UserRound } from "lucide-react";
 import { Logo } from "./Logo";
 import { useAuth, auth } from "@/lib/auth";
 
@@ -16,7 +16,7 @@ const nav = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const user = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 20);
@@ -122,8 +122,9 @@ export function SiteHeader() {
               >
                 Open Dashboard
               </Link>
+              <Link to="/profile" onClick={() => setOpen(false)} className="flex items-center justify-center gap-2 rounded-full border border-gold/40 px-4 py-2.5 text-sm text-gold"><UserRound className="h-4 w-4" /> Profile</Link>
               <button
-                onClick={() => { auth.logout(); setOpen(false); }}
+                onClick={() => { void auth.logout(); setOpen(false); }}
                 className="rounded-full border border-border px-4 py-2.5 text-sm"
               >
                 Logout

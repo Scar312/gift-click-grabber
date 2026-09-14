@@ -3,6 +3,8 @@ import { useState } from "react";
 import { auth } from "@/lib/auth";
 import { Logo } from "@/components/brand/Logo";
 import { Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { lovable } from "@/integrations/lovable";
 
 export function Field({ label, value, onChange, type = "text", required, placeholder }: { label: string; value: string; onChange: (v: string) => void; type?: string; required?: boolean; placeholder?: string }) {
   return (
@@ -52,24 +54,34 @@ export default function Signup() {
   const [show, setShow] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [checkEmail, setCheckEmail] = useState(false);
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
     if (form.password.length < 6) return setErr("Password must be at least 6 characters.");
     setLoading(true);
     try {
-      auth.signup(form);
-      navigate("/dashboard");
+      const { data, error } = await auth.signup(form);
+      if (error) throw error;
+      if (data.session) navigate("/dashboard");
+      else setCheckEmail(true);
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Sign up failed.");
       setLoading(false);
     }
   }
 
+  async function googleSignup() {
+    setErr(null);
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    if (result.error) setErr(result.error.message);
+    else if (!result.redirected) navigate("/dashboard");
+  }
+
   return (
     <AuthShell title="Create your account" subtitle="Join the Treasure Hunt community in seconds.">
-      <form onSubmit={submit} className="space-y-4">
+      {checkEmail ? <div className="rounded-xl border border-gold/30 bg-gold/5 p-5 text-sm text-muted-foreground"><strong className="text-gold">Check your email</strong><p className="mt-2">Confirm your address, then sign in to open your dashboard.</p></div> : <form onSubmit={submit} className="space-y-4">
         <Field label="Full Name" value={form.fullName} onChange={(v) => setForm({ ...form, fullName: v })} required />
         <Field label="Email Address" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
         <Field label="Phone Number" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} placeholder="+234 ..." />
@@ -89,13 +101,14 @@ export default function Signup() {
           </div>
         </div>
         {err && <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive-foreground">{err}</div>}
-        <button disabled={loading} className="group flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3 text-sm font-semibold text-navy-deep shadow-gold transition-transform hover:scale-[1.02] disabled:opacity-50">
+        <Button disabled={loading} className="group flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3 text-sm font-semibold text-navy-deep shadow-gold transition-transform hover:scale-[1.02] disabled:opacity-50">
           {loading ? "Creating..." : <>Create Account <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></>}
-        </button>
+        </Button>
+        <Button type="button" variant="outline" onClick={() => void googleSignup()} className="w-full rounded-full border-gold/40">Continue with Google</Button>
         <p className="text-center text-xs text-muted-foreground">
           Already have an account? <Link to="/login" className="text-gold hover:underline">Log in</Link>
         </p>
-      </form>
+      </form>}
     </AuthShell>
   );
 }

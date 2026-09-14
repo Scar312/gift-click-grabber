@@ -1,23 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import { SiteLayout } from "@/components/brand/SiteLayout";
 import { useAuth, auth } from "@/lib/auth";
 import { Wallet, TrendingUp, Award, LogOut } from "lucide-react";
 
 export default function Dashboard() {
-  const user = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user === null) {
-      const t = setTimeout(() => {
-        if (!auth.current()) navigate("/login");
-      }, 100);
-      return () => clearTimeout(t);
-    }
-  }, [user, navigate]);
-
-  if (!user) return null;
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
 
   return (
     <SiteLayout>
@@ -28,7 +20,7 @@ export default function Dashboard() {
             <h1 className="mt-1 font-display text-3xl sm:text-4xl">{user.fullName}</h1>
             <div className="mt-1 font-mono text-xs text-gold/80">Account #{user.accountId}</div>
           </div>
-          <button onClick={() => { auth.logout(); navigate("/"); }} className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm hover:bg-card">
+          <button onClick={() => { void auth.logout().then(() => navigate("/")); }} className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm hover:bg-card">
             <LogOut className="h-4 w-4" /> Logout
           </button>
         </div>
@@ -36,7 +28,7 @@ export default function Dashboard() {
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {[
             { i: Wallet, t: "Wallet Balance", v: "₦0" },
-            { i: TrendingUp, t: "Active Plan", v: user.rank || "Not selected" },
+            { i: TrendingUp, t: "Active Plan", v: "Not selected" },
             { i: Award, t: "Member Since", v: new Date(user.createdAt).toLocaleDateString() },
           ].map(({ i: Icon, t, v }) => (
             <div key={t} className="glass rounded-2xl p-6">

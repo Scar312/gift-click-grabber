@@ -1,9 +1,12 @@
-import { Link } from "react-router-dom";
 import { SiteLayout } from "@/components/brand/SiteLayout";
 import { RANKS, SAVINGS_PLANS } from "@/lib/thv-data";
 import { CheckCircle2, ArrowRight, Award, PiggyBank } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { PaymentDialog } from "@/components/brand/PaymentDialog";
 
 export default function Plans() {
+  const [choice, setChoice] = useState<{ id: string; name: string; price: number; type: "installment" | "outright" } | null>(null);
   return (
     <SiteLayout>
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
@@ -25,9 +28,10 @@ export default function Plans() {
               <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
                 {r.without.map((b) => <li key={b} className="flex gap-1.5"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold/60" />{b}</li>)}
               </ul>
-              <Link to="/signup" className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-2.5 text-sm font-semibold text-navy-deep">
-                Select <ArrowRight className="h-4 w-4" />
-              </Link>
+              <div className="mt-6 grid gap-2">
+                <Button onClick={() => setChoice({ id: r.id, name: r.name, price: r.price, type: "installment" })} variant="outline" className="w-full rounded-full border-gold/40 text-gold">Installment · ₦{(r.price / 5).toLocaleString()}/mo</Button>
+                <Button onClick={() => setChoice({ id: r.id, name: r.name, price: r.price, type: "outright" })} className="w-full rounded-full bg-gradient-gold text-navy-deep">Outright Payment <ArrowRight className="ml-2 h-4 w-4" /></Button>
+              </div>
             </div>
           ))}
         </div>
@@ -44,11 +48,12 @@ export default function Plans() {
                 <div><dt className="text-muted-foreground text-xs uppercase tracking-widest">Payout</dt><dd>{p.payout}</dd></div>
                 <div><dt className="text-muted-foreground text-xs uppercase tracking-widest">Example</dt><dd className="text-gold">{p.example}</dd></div>
               </dl>
-              <Link to="/signup" className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-gold px-6 py-2.5 text-sm font-semibold text-navy-deep">Start Saving <ArrowRight className="h-4 w-4" /></Link>
+              <Button onClick={() => window.location.href = "/signup"} className="mt-6 rounded-full bg-gradient-gold text-navy-deep">Start Saving <ArrowRight className="ml-2 h-4 w-4" /></Button>
             </div>
           ))}
         </div>
       </section>
+      <PaymentDialog choice={choice} onClose={() => setChoice(null)} />
     </SiteLayout>
   );
 }
