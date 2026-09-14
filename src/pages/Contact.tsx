@@ -1,6 +1,6 @@
 import { SiteLayout } from "@/components/brand/SiteLayout";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Mail, MapPin, Send, MessageCircle, Users } from "lucide-react";
+import { Mail, MapPin, Send, Users } from "lucide-react";
 import { useState } from "react";
 
 function Inp({ label, type = "text", value, onChange }: { label: string; type?: string; value: string; onChange: (v: string) => void }) {
@@ -28,10 +28,6 @@ export default function Contact() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     setOpen(true);
-  };
-
-  const sendViaWhatsApp = () => {
-    window.location.href = "https://wa.link/pfmaxr";
   };
 
   const sendViaEmail = () => {
@@ -129,16 +125,10 @@ export default function Contact() {
           <DialogHeader>
             <DialogTitle className="font-display text-gradient-gold">Send your message</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Choose how you would like to send your message to Treasure Hunt Ventures.
+              Send your message to Treasure Hunt Ventures by email.
             </DialogDescription>
           </DialogHeader>
           <div className="mt-2 grid gap-3">
-            <button
-              onClick={() => { setSent(true); sendViaWhatsApp(); }}
-              className="flex items-center justify-center gap-2 rounded-xl border border-gold/20 bg-gold/10 px-4 py-3 text-sm font-semibold text-gold transition hover:bg-gold/20"
-            >
-              <MessageCircle className="h-4 w-4" /> Send via WhatsApp
-            </button>
             <button
               onClick={() => { setSent(true); sendViaEmail(); }}
               className="flex items-center justify-center gap-2 rounded-xl border border-gold/20 bg-gold/10 px-4 py-3 text-sm font-semibold text-gold transition hover:bg-gold/20"
