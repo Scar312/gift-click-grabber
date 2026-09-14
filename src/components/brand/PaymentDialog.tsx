@@ -37,8 +37,10 @@ export function PaymentDialog({ choice, onClose }: { choice: PaymentChoice | nul
       proof_path: path,
     });
     if (recordError) { setError(recordError.message); setSending(false); return; }
-    const message = `Payment proof submitted%0AAccount ID: ${encodeURIComponent(user.accountId)}%0ARank: ${encodeURIComponent(choice.name)}%0APayment: ${choice.type}%0AAmount: ₦${amount.toLocaleString()}`;
-    window.location.href = `https://wa.link/0ek13k?text=${message}`;
+    const { data: signedProof, error: signedError } = await supabase.storage.from("payment-proofs").createSignedUrl(path, 60 * 60 * 24 * 7);
+    if (signedError) { setError(signedError.message); setSending(false); return; }
+    const message = `Payment proof submitted\nAccount ID: ${user.accountId}\nRank: ${choice.name}\nPayment: ${choice.type}\nAmount: ₦${amount.toLocaleString()}\nProof: ${signedProof.signedUrl}`;
+    window.location.href = `https://wa.link/0ek13k?text=${encodeURIComponent(message)}`;
   }
 
   return (
