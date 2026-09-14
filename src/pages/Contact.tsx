@@ -1,6 +1,6 @@
 import { SiteLayout } from "@/components/brand/SiteLayout";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Mail, Phone, MapPin, Send, MessageCircle, Users } from "lucide-react";
+import { Mail, MapPin, Send, MessageCircle, Users } from "lucide-react";
 import { useState } from "react";
 
 function Inp({ label, type = "text", value, onChange }: { label: string; type?: string; value: string; onChange: (v: string) => void }) {
@@ -51,7 +51,6 @@ export default function Contact() {
           <div className="space-y-4 sm:space-y-5">
             {[
               { i: Mail, t: "Email", v: "thetreasurehunt001@outlook.com", link: "mailto:thetreasurehunt001@outlook.com" },
-              { i: MessageCircle, t: "WhatsApp Line", v: "+44 7796 381745", link: "https://wa.link/pfmaxr" },
               { i: MapPin, t: "Office", v: "Lagos, Nigeria" },
             ].map(({ i: Icon, t, v, link }) => (
               <div key={v} className="flex items-start gap-4 rounded-2xl border border-gold/15 bg-card/60 p-4 sm:p-5 backdrop-blur">

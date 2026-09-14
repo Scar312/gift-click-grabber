@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Logo } from "./Logo";
-import { Mail, Phone, MapPin, ShieldCheck, MessageCircle } from "lucide-react";
+import { Mail, MapPin, ShieldCheck } from "lucide-react";
 
 export function SiteFooter() {
   return (
@@ -40,16 +40,6 @@ export function SiteFooter() {
                 <Mail className="mt-0.5 h-4 w-4 text-gold" />
                 <a href="mailto:thetreasurehunt001@outlook.com" className="hover:text-gold hover:underline">
                   thetreasurehunt001@outlook.com
-                </a>
-              </li>
-              <li className="flex items-start gap-2">
-                <MessageCircle className="mt-0.5 h-4 w-4 text-gold" />
-                <a
-                  href="https://wa.link/pfmaxr"
-                  onClick={(e) => { e.preventDefault(); window.location.href = "https://wa.link/pfmaxr"; }}
-                  className="hover:text-gold hover:underline"
-                >
-                  WhatsApp Line: +44 7796 381745
                 </a>
               </li>
               <li className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 text-gold" /> Lagos, Nigeria</li>

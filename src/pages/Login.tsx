@@ -3,6 +3,8 @@ import { useState } from "react";
 import { auth } from "@/lib/auth";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import { AuthShell, Field } from "./Signup";
+import { lovable } from "@/integrations/lovable";
+import { Button } from "@/components/ui/button";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -12,17 +14,25 @@ export default function Login() {
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
     setLoading(true);
     try {
-      auth.login(email, password);
+      const { error } = await auth.login(email, password);
+      if (error) throw error;
       navigate("/dashboard");
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Login failed.");
       setLoading(false);
     }
+  }
+
+  async function googleLogin() {
+    setErr(null);
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    if (result.error) setErr(result.error.message);
+    else if (!result.redirected) navigate("/dashboard");
   }
 
   return (
@@ -45,9 +55,10 @@ export default function Login() {
           </div>
         </div>
         {err && <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive-foreground">{err}</div>}
-        <button disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3 text-sm font-semibold text-navy-deep shadow-gold transition-transform hover:scale-[1.02] disabled:opacity-50">
+        <Button disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3 text-sm font-semibold text-navy-deep shadow-gold transition-transform hover:scale-[1.02] disabled:opacity-50">
           {loading ? "Signing in..." : <>Sign In <ArrowRight className="h-4 w-4" /></>}
-        </button>
+        </Button>
+        <Button type="button" variant="outline" onClick={() => void googleLogin()} className="w-full rounded-full border-gold/40">Continue with Google</Button>
         <p className="text-center text-xs text-muted-foreground">
           New here? <Link to="/signup" className="text-gold hover:underline">Create an account</Link>
         </p>
