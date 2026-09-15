@@ -3,10 +3,11 @@ import { RANKS, SAVINGS_PLANS } from "@/lib/thv-data";
 import { CheckCircle2, ArrowRight, Award, PiggyBank } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PaymentDialog } from "@/components/brand/PaymentDialog";
+import { PaymentDialog, type PaymentChoice } from "@/components/brand/PaymentDialog";
 
 export default function Plans() {
-  const [choice, setChoice] = useState<{ id: string; name: string; price: number; type: "installment" | "outright" } | null>(null);
+  const [choice, setChoice] = useState<PaymentChoice | null>(null);
+
   return (
     <SiteLayout>
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
@@ -48,7 +49,22 @@ export default function Plans() {
                 <div><dt className="text-muted-foreground text-xs uppercase tracking-widest">Payout</dt><dd>{p.payout}</dd></div>
                 <div><dt className="text-muted-foreground text-xs uppercase tracking-widest">Example</dt><dd className="text-gold">{p.example}</dd></div>
               </dl>
-              <Button onClick={() => window.location.href = "/signup"} className="mt-6 rounded-full bg-gradient-gold text-navy-deep">Start Saving <ArrowRight className="ml-2 h-4 w-4" /></Button>
+              <div className="mt-6 grid gap-2">
+                <Button
+                  onClick={() => setChoice({ id: `${p.id}-installment`, name: p.name, price: 0, type: "installment", kind: "savings", amountEditable: true, note: `${p.duration} · ${p.rate} interest · ${p.payout}` })}
+                  variant="outline"
+                  className="w-full rounded-full border-gold/40 text-gold"
+                >
+                  Installment Savings · 5 months
+                </Button>
+                <Button
+                  onClick={() => setChoice({ id: `${p.id}-outright`, name: p.name, price: 0, type: "outright", kind: "savings", amountEditable: true, note: `${p.duration} · ${p.rate} interest · ${p.payout}` })}
+                  className="w-full rounded-full bg-gradient-gold text-navy-deep"
+                >
+                  Start Saving — Outright <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+
             </div>
           ))}
         </div>
