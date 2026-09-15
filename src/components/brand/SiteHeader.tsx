@@ -84,18 +84,19 @@ export function SiteHeader() {
         <button
           aria-label="Toggle menu"
           onClick={() => setOpen((v) => !v)}
-          className="grid h-10 w-10 place-items-center rounded-full border border-gold/30 text-gold lg:hidden"
+          className={`grid h-10 w-10 place-items-center rounded-full border border-gold/30 text-gold ${user ? "" : "lg:hidden"}`}
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       <div
-        className={`lg:hidden overflow-hidden transition-[max-height] duration-300 ease-in-out ${
+        className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${user ? "" : "lg:hidden"} ${
           open ? "max-h-[600px]" : "max-h-0"
         }`}
       >
-        <div className="mx-4 mb-4 rounded-2xl border border-gold/20 bg-card/95 p-5 backdrop-blur-xl">
+        <div className="mx-4 mb-4 rounded-2xl border border-gold/20 bg-card/95 p-5 backdrop-blur-xl lg:ml-auto lg:mr-6 lg:max-w-sm">
+
           <nav className="flex flex-col gap-1">
             {nav.map((n) => (
               <Link

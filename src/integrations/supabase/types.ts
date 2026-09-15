@@ -58,30 +58,45 @@ export type Database = {
           account_id: string
           avatar_path: string | null
           created_at: string
+          current_plan_id: string | null
+          current_plan_name: string | null
+          current_plan_type: string | null
           date_of_birth: string | null
           full_name: string
           id: string
           phone: string | null
+          plan_status: string | null
+          plan_updated_at: string | null
           updated_at: string
         }
         Insert: {
           account_id: string
           avatar_path?: string | null
           created_at?: string
+          current_plan_id?: string | null
+          current_plan_name?: string | null
+          current_plan_type?: string | null
           date_of_birth?: string | null
           full_name?: string
           id: string
           phone?: string | null
+          plan_status?: string | null
+          plan_updated_at?: string | null
           updated_at?: string
         }
         Update: {
           account_id?: string
           avatar_path?: string | null
           created_at?: string
+          current_plan_id?: string | null
+          current_plan_name?: string | null
+          current_plan_type?: string | null
           date_of_birth?: string | null
           full_name?: string
           id?: string
           phone?: string | null
+          plan_status?: string | null
+          plan_updated_at?: string | null
           updated_at?: string
         }
         Relationships: []
