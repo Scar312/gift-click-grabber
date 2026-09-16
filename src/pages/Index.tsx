@@ -29,7 +29,7 @@ function Hero() {
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="animate-fade-up">
             <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-1.5 text-xs font-medium tracking-wide text-gold">
-              <Sparkles className="h-3.5 w-3.5" /> 1st Anniversary — 30% Christmas Promo Live
+              <Sparkles className="h-3.5 w-3.5" /> 1st Anniversary — Up to 45% Interest
             </div>
             <h1 className="mt-6 font-display text-4xl font-bold leading-[1.05] sm:text-5xl lg:text-6xl xl:text-7xl">
               Unearth <span className="text-gradient-gold">Treasures</span><br />
@@ -77,7 +77,7 @@ function Stats() {
   const items = [
     { v: "₦2.4B+", l: "Disbursed in Rewards" },
     { v: "12,000+", l: "Active Treasure Hunters" },
-    { v: "25%", l: "Max Interest Rate" },
+    { v: "45%", l: "Max Interest Rate" },
     { v: "11 mo", l: "Reward Cycle" },
   ];
   return (
@@ -120,7 +120,7 @@ function About() {
         <div className="grid grid-cols-2 gap-4">
           {[
             { i: Users, n: "12K+", l: "Members" },
-            { i: PiggyBank, n: "20–25%", l: "Interest" },
+            { i: PiggyBank, n: "30–45%", l: "Interest" },
             { i: Gift, n: "4 Ranks", l: "Food Packages" },
             { i: ShieldCheck, n: "100%", l: "Secured" },
           ].map(({ i: Icon, n, l }) => (
@@ -264,11 +264,11 @@ function HowItWorks() {
 function Benefits() {
   const items = [
     { i: ShieldCheck, t: "Transparent System", d: "Clear cycles, defined ranks, predictable rewards. No virtual promises." },
-    { i: TrendingUp, t: "Guaranteed Returns", d: "Earn up to 25% interest or food rewards worth more than your contribution." },
+    { i: TrendingUp, t: "Guaranteed Returns", d: "Earn up to 45% interest or food rewards worth more than your contribution." },
     { i: Users, t: "Referral Bonuses", d: "Refer Hunters to unlock the full premium reward package for your rank." },
     { i: Wallet, t: "Flexible Payments", d: "Pay outright or spread payments monthly. You stay in control of your cash flow." },
     { i: Award, t: "Rank Migration", d: "Upgrade to a higher rank anytime with a small ₦5,000 migration fee." },
-    { i: Sparkles, t: "Anniversary Promos", d: "Special 30% interest boost for savings of ₦500,000+ during anniversary windows." },
+    { i: Sparkles, t: "Anniversary Boost", d: "Special 45% interest boost for savings of ₦500,000+ during anniversary windows." },
   ];
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
@@ -296,7 +296,7 @@ function Benefits() {
 function Testimonials() {
   const t = [
     { n: "Adaeze O.", r: "Ijele Hunter", q: "I received my full food package on time — 4 bags of rice, yam, semo, everything. Best decision I made this year.", rt: 5 },
-    { n: "Tunde A.", r: "Plan B Saver", q: "Earned 25% interest on my ₦300,000. The team was transparent throughout the entire cycle.", rt: 5 },
+    { n: "Tunde A.", r: "Plan B Saver", q: "Earned 45% interest on my ₦300,000. The team was transparent throughout the entire cycle.", rt: 5 },
     { n: "Chinaza E.", r: "Chief Hunter", q: "I referred two friends and unlocked the full referral package. Truly rewarding community.", rt: 5 },
   ];
   return (

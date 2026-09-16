@@ -57,49 +57,72 @@ export type Database = {
         Row: {
           account_id: string
           avatar_path: string | null
+          balance_active: boolean
           created_at: string
           current_plan_id: string | null
           current_plan_name: string | null
           current_plan_type: string | null
           date_of_birth: string | null
           full_name: string
+          home_address: string | null
           id: string
           phone: string | null
           plan_status: string | null
           plan_updated_at: string | null
+          referral_code: string | null
+          referred_by: string | null
           updated_at: string
+          wallet_balance: number
         }
         Insert: {
           account_id: string
           avatar_path?: string | null
+          balance_active?: boolean
           created_at?: string
           current_plan_id?: string | null
           current_plan_name?: string | null
           current_plan_type?: string | null
           date_of_birth?: string | null
           full_name?: string
+          home_address?: string | null
           id: string
           phone?: string | null
           plan_status?: string | null
           plan_updated_at?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
+          wallet_balance?: number
         }
         Update: {
           account_id?: string
           avatar_path?: string | null
+          balance_active?: boolean
           created_at?: string
           current_plan_id?: string | null
           current_plan_name?: string | null
           current_plan_type?: string | null
           date_of_birth?: string | null
           full_name?: string
+          home_address?: string | null
           id?: string
           phone?: string | null
           plan_status?: string | null
           plan_updated_at?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
+          wallet_balance?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
