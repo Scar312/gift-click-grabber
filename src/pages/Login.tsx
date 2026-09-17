@@ -30,9 +30,17 @@ export default function Login() {
 
   async function googleLogin() {
     setErr(null);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (result.error) setErr(result.error.message);
-    else if (!result.redirected) navigate("/dashboard");
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+        extraParams: { prompt: "select_account" },
+      });
+      if (result.error) { setErr(result.error.message); return; }
+      if (result.redirected) return;
+      navigate("/dashboard");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Google sign-in failed. Please try again.");
+    }
   }
 
   return (
