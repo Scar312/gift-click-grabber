@@ -16,6 +16,10 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import Verify from "./pages/Verify";
+import PrivacySecurity from "./pages/PrivacySecurity";
+import Referrals from "./pages/Referrals";
+import Upgrade from "./pages/Upgrade";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 
@@ -46,6 +50,10 @@ const App = () => (
           <Route path="/signup" element={<GuestOnly><Signup /></GuestOnly>} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/verify" element={<Verify />} />
+          <Route path="/privacy-security" element={<PrivacySecurity />} />
+          <Route path="/referrals" element={<Referrals />} />
+          <Route path="/upgrade" element={<Upgrade />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
