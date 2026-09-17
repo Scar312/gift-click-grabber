@@ -50,7 +50,7 @@ export function AuthShell({ title, subtitle, children }: { title: string; subtit
 
 export default function Signup() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ fullName: "", email: "", phone: "", password: "" });
+  const [form, setForm] = useState({ fullName: "", email: "", phone: "", password: "", referralCode: "" });
   const [show, setShow] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -110,9 +110,17 @@ export default function Signup() {
 
   async function googleSignup() {
     setErr(null);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (result.error) setErr(result.error.message);
-    else if (!result.redirected) navigate("/dashboard");
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+        extraParams: { prompt: "select_account" },
+      });
+      if (result.error) { setErr(result.error.message); return; }
+      if (result.redirected) return;
+      navigate("/dashboard");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Google sign-in failed. Please try again.");
+    }
   }
 
   return (
@@ -147,6 +155,7 @@ export default function Signup() {
           <Field label="Full Name" value={form.fullName} onChange={(v) => setForm({ ...form, fullName: v })} required />
           <Field label="Email Address" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
           <Field label="Phone Number" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} placeholder="+234 ..." />
+          <Field label="Referral Code (optional)" value={form.referralCode} onChange={(v) => setForm({ ...form, referralCode: v })} placeholder="e.g. THV000123" />
           <div>
             <label className="text-xs uppercase tracking-widest text-muted-foreground">Password</label>
             <div className="mt-1.5 relative">
