@@ -49,7 +49,7 @@ function Hero() {
             </div>
             <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 text-xs text-muted-foreground">
               <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-gold" /> Safe & Secure</div>
-              <div className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-gold" /> Up to 25% Interest</div>
+              <div className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-gold" /> Up to 45% Interest</div>
               <div className="flex items-center gap-2"><Award className="h-4 w-4 text-gold" /> Tangible Rewards</div>
             </div>
           </div>
