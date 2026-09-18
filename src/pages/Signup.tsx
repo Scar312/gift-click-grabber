@@ -114,7 +114,7 @@ export default function Signup() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: window.location.origin + "/verify",
+          redirectTo: window.location.origin + "/verify", // no /~oauth/initiate — direct Cloud Google auth
           queryParams: { prompt: "select_account" },
         },
       });
