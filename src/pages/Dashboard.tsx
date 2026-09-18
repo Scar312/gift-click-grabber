@@ -82,7 +82,7 @@ export default function Dashboard() {
 
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           {[
-            { i: Wallet, t: "Wallet Balance", v: "₦0" },
+            { i: Wallet, t: "Wallet Balance", v: `₦${user.walletBalance.toLocaleString()}` },
             { i: TrendingUp, t: "Active Plan", v: user.planName ?? "Not selected" },
             { i: Award, t: "Member Since", v: new Date(user.createdAt).toLocaleDateString() },
           ].map(({ i: Icon, t, v }) => (
