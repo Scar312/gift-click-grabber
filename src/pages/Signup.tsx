@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { Logo } from "@/components/brand/Logo";
 import { Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { lovable } from "@/integrations/lovable";
+import { supabase } from "@/integrations/supabase/client";
 
 export function Field({ label, value, onChange, type = "text", required, placeholder }: { label: string; value: string; onChange: (v: string) => void; type?: string; required?: boolean; placeholder?: string }) {
   return (

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { auth } from "@/lib/auth";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import { AuthShell, Field } from "./Signup";
-import { lovable } from "@/integrations/lovable";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export default function Login() {
