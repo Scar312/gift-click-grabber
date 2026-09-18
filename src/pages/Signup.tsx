@@ -111,13 +111,15 @@ export default function Signup() {
   async function googleSignup() {
     setErr(null);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-        extraParams: { prompt: "select_account" },
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin + "/verify",
+          queryParams: { prompt: "select_account" },
+        },
       });
-      if (result.error) { setErr(result.error.message); return; }
-      if (result.redirected) return;
-      navigate("/dashboard");
+      if (error) setErr(error.message);
+      // On success the browser redirects to Google; no further action here.
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Google sign-in failed. Please try again.");
     }
