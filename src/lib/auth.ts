@@ -20,6 +20,7 @@ export type User = {
   walletBalance: number;
   balanceActive: boolean;
   referralCount: number;
+  accountActivated: boolean;
   createdAt: string;
 };
 
@@ -46,7 +47,7 @@ async function loadCurrentUser(): Promise<User | null> {
   if (error || !user) return null;
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("account_id, full_name, phone, date_of_birth, home_address, avatar_path, created_at, current_plan_id, current_plan_name, current_plan_type, plan_status, plan_updated_at, referral_code, wallet_balance, balance_active")
+    .select("account_id, full_name, phone, date_of_birth, home_address, avatar_path, created_at, current_plan_id, current_plan_name, current_plan_type, plan_status, plan_updated_at, referral_code, wallet_balance, balance_active, account_activated")
     .eq("id", user.id)
     .maybeSingle();
   if (profileError || !profile) return null;
@@ -76,6 +77,7 @@ async function loadCurrentUser(): Promise<User | null> {
     walletBalance: Number(profile.wallet_balance ?? 0),
     balanceActive: Boolean(profile.balance_active),
     referralCount: count ?? 0,
+    accountActivated: Boolean((profile as { account_activated?: boolean }).account_activated),
     createdAt: profile.created_at,
   };
 }

@@ -11,7 +11,7 @@ export type PaymentChoice = {
   name: string;
   price: number;
   type: "installment" | "outright";
-  kind?: "rank" | "savings";
+  kind?: "rank" | "savings" | "activation";
   amountEditable?: boolean;
   note?: string;
 };
@@ -46,9 +46,10 @@ export function PaymentDialog({ choice, onClose }: { choice: PaymentChoice | nul
       payment_type: choice.type,
       amount,
       proof_path: path,
-    });
+      account_id: user.accountId,
+    } as never);
     if (recordError) { setError(recordError.message); setSending(false); return; }
-    try {
+    if (choice.kind !== "activation") try {
       await auth.setPlan({ planId: choice.id, planName: choice.name, planType: choice.type, status: "Pending confirmation" });
     } catch (planError) {
       setError(planError instanceof Error ? planError.message : "Could not update your profile.");
@@ -57,7 +58,7 @@ export function PaymentDialog({ choice, onClose }: { choice: PaymentChoice | nul
     }
     const { data: signedProof, error: signedError } = await supabase.storage.from("payment-proofs").createSignedUrl(path, 60 * 60 * 24 * 7);
     if (signedError) { setError(signedError.message); setSending(false); return; }
-    const label = choice.kind === "savings" ? "Savings Plan" : "Rank";
+    const label = choice.kind === "activation" ? "Activation" : choice.kind === "savings" ? "Savings Plan" : "Rank";
     const message = `Payment proof submitted\nAccount ID: ${user.accountId}\n${label}: ${choice.name}\nPayment: ${choice.type}\nAmount: ₦${amount.toLocaleString()}\nProof: ${signedProof.signedUrl}`;
     window.location.href = `https://wa.link/0ek13k?text=${encodeURIComponent(message)}`;
   }
@@ -67,7 +68,7 @@ export function PaymentDialog({ choice, onClose }: { choice: PaymentChoice | nul
       <DialogContent className="max-h-[90vh] overflow-y-auto border-gold/15 bg-card text-foreground sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="font-display text-gradient-gold">{choice.name}</DialogTitle>
-          <DialogDescription>{choice.type === "installment" ? "Five monthly payments" : "One full payment"}</DialogDescription>
+          <DialogDescription>{choice.kind === "activation" ? "One-time account activation fee" : choice.type === "installment" ? "Five monthly payments" : "One full payment"}</DialogDescription>
         </DialogHeader>
         <div className="space-y-5">
           {choice.amountEditable && (

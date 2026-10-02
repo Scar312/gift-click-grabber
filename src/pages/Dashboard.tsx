@@ -1,14 +1,32 @@
 import { Link } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import { SiteLayout } from "@/components/brand/SiteLayout";
+import { useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { PaymentDialog, type PaymentChoice } from "@/components/brand/PaymentDialog";
 import { Wallet, TrendingUp, Award, Camera, Mail, Phone, Cake, BadgeCheck, ArrowRight } from "lucide-react";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
+  const [pay, setPay] = useState<PaymentChoice | null>(null);
 
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
+  if (!user.accountActivated) {
+    return (
+      <SiteLayout>
+        <section className="mx-auto max-w-lg px-4 py-16">
+          <div className="glass rounded-3xl p-8 text-center">
+            <h1 className="font-display text-3xl text-gradient-gold">Activate Your Account</h1>
+            <p className="mt-3 text-sm text-muted-foreground">A one-time activation payment of ₦2,500 is required before you can access your dashboard. Upload your payment proof and we'll activate your account once it's confirmed.</p>
+            <div className="mt-4 text-sm">Account ID: <span className="font-mono text-gold">{user.accountId}</span></div>
+            <button onClick={() => setPay({ id: "activation", name: "Account Activation", price: 2500, type: "outright", kind: "activation" })} className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-gold px-6 py-2.5 text-sm font-semibold text-navy-deep">Pay ₦2,500 to Activate</button>
+          </div>
+        </section>
+        <PaymentDialog choice={pay} onClose={() => setPay(null)} />
+      </SiteLayout>
+    );
+  }
 
   const initials = user.fullName.split(" ").filter(Boolean).slice(0, 2).map((p) => p[0]?.toUpperCase()).join("") || "TH";
   const completion = [user.fullName, user.phone, user.dateOfBirth, user.avatarPath].filter(Boolean).length;

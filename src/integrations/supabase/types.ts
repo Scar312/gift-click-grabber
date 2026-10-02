@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       payment_submissions: {
         Row: {
+          account_id: string | null
           amount: number
           created_at: string
           id: string
@@ -28,6 +29,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          account_id?: string | null
           amount: number
           created_at?: string
           id?: string
@@ -40,6 +42,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          account_id?: string | null
           amount?: number
           created_at?: string
           id?: string
@@ -55,6 +58,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_activated: boolean
           account_id: string
           avatar_path: string | null
           balance_active: boolean
@@ -75,6 +79,7 @@ export type Database = {
           wallet_balance: number
         }
         Insert: {
+          account_activated?: boolean
           account_id: string
           avatar_path?: string | null
           balance_active?: boolean
@@ -95,6 +100,7 @@ export type Database = {
           wallet_balance?: number
         }
         Update: {
+          account_activated?: boolean
           account_id?: string
           avatar_path?: string | null
           balance_active?: boolean
