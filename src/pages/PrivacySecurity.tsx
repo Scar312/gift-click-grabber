@@ -1,3 +1,4 @@
+import { CopyId } from "@/components/brand/CopyId";
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { SiteLayout } from "@/components/brand/SiteLayout";
@@ -44,7 +45,7 @@ export default function PrivacySecurity() {
         <div className="mt-10 rounded-2xl border border-gold/15 bg-card/60 p-6 sm:p-8">
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground"><ShieldCheck className="h-4 w-4 text-gold" /> Your THV ID</div>
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <span className="rounded-xl border border-gold/30 bg-gold/10 px-4 py-2.5 font-mono text-lg text-gold">{user.accountId}</span>
+            <CopyId id={user.accountId} className="rounded-xl border border-gold/30 bg-gold/10 px-4 py-2.5 font-mono text-lg text-gold" />
             <Button type="button" variant="outline" onClick={() => void copy()} className="rounded-full border-gold/40 text-gold">
               {copied ? <><Check className="mr-2 h-4 w-4" /> Copied</> : <><Copy className="mr-2 h-4 w-4" /> Copy ID</>}
             </Button>

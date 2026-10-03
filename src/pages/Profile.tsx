@@ -1,3 +1,4 @@
+import { CopyId } from "@/components/brand/CopyId";
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { SiteLayout } from "@/components/brand/SiteLayout";
@@ -56,7 +57,7 @@ export default function Profile() {
     <SiteLayout>
       <section className="mx-auto max-w-2xl px-4 py-14 sm:px-6 sm:py-20">
         <h1 className="font-display text-3xl sm:text-5xl">Your <span className="text-gradient-gold">Profile</span></h1>
-        <p className="mt-2 font-mono text-sm text-gold">Account #{user.accountId}</p>
+        <p className="mt-2 font-mono text-sm text-gold"><CopyId id={user.accountId} prefix="Account #" /></p>
 
         <div className="mt-6 flex flex-wrap gap-4">
           <div className="flex-1 rounded-2xl border border-gold/20 bg-gold/5 p-5">

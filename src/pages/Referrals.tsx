@@ -1,3 +1,4 @@
+import { CopyId } from "@/components/brand/CopyId";
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { SiteLayout } from "@/components/brand/SiteLayout";
@@ -73,7 +74,7 @@ export default function Referrals() {
                 {rows.map((r) => (
                   <tr key={r.id} className="border-b border-border/60 last:border-0">
                     <td className="px-4 py-3">{r.fullName || "Member"}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-gold">{r.accountId}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-gold"><CopyId id={r.accountId} /></td>
                     <td className="px-4 py-3 text-muted-foreground">{new Date(r.joinedAt).toLocaleDateString()}</td>
                     <td className="px-4 py-3 text-muted-foreground">{r.planName ?? "—"}</td>
                     <td className="px-4 py-3">

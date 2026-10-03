@@ -1,3 +1,4 @@
+import { CopyId } from "@/components/brand/CopyId";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -93,7 +94,7 @@ export function PaymentDialog({ choice, onClose }: { choice: PaymentChoice | nul
             <Landmark className="mt-0.5 h-5 w-5 shrink-0 text-gold" />
             <div><strong>Ecobank</strong><br />Account Number: 2070058281<br />Account Name: Treasure hunt ventures</div>
           </div>
-          {user && <div className="text-sm">Account ID: <span className="font-mono text-gold">{user.accountId}</span></div>}
+          {user && <div className="text-sm">Account ID: <CopyId id={user.accountId} className="font-mono text-gold" /></div>}
           <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-gold/40 p-4 text-sm text-gold hover:bg-gold/5">
             <Upload className="h-4 w-4" /> {proof ? proof.name : "Upload payment proof"}
             <input type="file" accept="image/*,.pdf" className="hidden" onChange={(e) => setProof(e.target.files?.[0] ?? null)} />
