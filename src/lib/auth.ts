@@ -21,6 +21,9 @@ export type User = {
   balanceActive: boolean;
   referralCount: number;
   accountActivated: boolean;
+  bankName?: string;
+  bankAccountNumber?: string;
+  bankAccountName?: string;
   createdAt: string;
 };
 
@@ -35,6 +38,18 @@ export type Referral = {
   balanceActive: boolean;
 };
 
+const PHONE_DOMAIN = "@phone.thv.local";
+export function isEmail(v: string) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+export function phoneDigits(v: string) {
+  let d = v.replace(/\D/g, "");
+  if (d.startsWith("0") && d.length === 11) d = "234" + d.slice(1);
+  return d;
+}
+/** Phone accounts sign in with an internal address derived from the number. */
+export function loginIdFor(identifier: string) {
+  return isEmail(identifier) ? identifier.trim().toLowerCase() : `${phoneDigits(identifier)}${PHONE_DOMAIN}`;
+}
+
 export type AuthState = { user: User | null; loading: boolean };
 
 export async function signedUrl(bucket: string, path: string, seconds = 60 * 60) {
@@ -47,7 +62,7 @@ async function loadCurrentUser(): Promise<User | null> {
   if (error || !user) return null;
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("account_id, full_name, phone, date_of_birth, home_address, avatar_path, created_at, current_plan_id, current_plan_name, current_plan_type, plan_status, plan_updated_at, referral_code, wallet_balance, balance_active, account_activated")
+    .select("account_id, full_name, phone, date_of_birth, home_address, avatar_path, created_at, current_plan_id, current_plan_name, current_plan_type, plan_status, plan_updated_at, referral_code, wallet_balance, balance_active, account_activated, email, bank_name, bank_account_number, bank_account_name")
     .eq("id", user.id)
     .maybeSingle();
   if (profileError || !profile) return null;
@@ -62,7 +77,7 @@ async function loadCurrentUser(): Promise<User | null> {
     id: user.id,
     accountId: profile.account_id,
     fullName: profile.full_name,
-    email: user.email ?? "",
+    email: profile.email ?? (user.email?.endsWith(PHONE_DOMAIN) ? "" : user.email ?? ""),
     phone: profile.phone ?? undefined,
     dateOfBirth: profile.date_of_birth ?? undefined,
     homeAddress: profile.home_address ?? undefined,
@@ -77,23 +92,28 @@ async function loadCurrentUser(): Promise<User | null> {
     walletBalance: Number(profile.wallet_balance ?? 0),
     balanceActive: Boolean(profile.balance_active),
     referralCount: count ?? 0,
-    accountActivated: Boolean((profile as { account_activated?: boolean }).account_activated),
+    accountActivated: Boolean(profile.account_activated),
+    bankName: profile.bank_name ?? undefined,
+    bankAccountNumber: profile.bank_account_number ?? undefined,
+    bankAccountName: profile.bank_account_name ?? undefined,
     createdAt: profile.created_at,
   };
 }
 
 export const auth = {
   current: loadCurrentUser,
-  async signup(input: { fullName: string; email: string; password: string; phone?: string; referralCode?: string }) {
+  async signup(input: { fullName: string; identifier: string; password: string; phone?: string; referralCode?: string }) {
+    const byEmail = isEmail(input.identifier);
+    const phone = byEmail ? (input.phone ?? "") : input.identifier.trim();
     return supabase.auth.signUp({
-      email: input.email,
+      email: loginIdFor(input.identifier),
       password: input.password,
       options: {
-        emailRedirectTo: `${window.location.origin}/verify`,
         data: {
           full_name: input.fullName,
-          phone: input.phone ?? "",
+          phone,
           referral_code: (input.referralCode ?? "").trim(),
+          ...(byEmail ? {} : { contact_email: "" }),
         },
       },
     });
@@ -115,8 +135,8 @@ export const auth = {
       options: { emailRedirectTo: `${window.location.origin}/verify` },
     });
   },
-  async login(email: string, password: string) {
-    return supabase.auth.signInWithPassword({ email, password });
+  async login(identifier: string, password: string) {
+    return supabase.auth.signInWithPassword({ email: loginIdFor(identifier), password });
   },
   async logout() {
     await supabase.auth.signOut();
@@ -161,7 +181,7 @@ export const auth = {
     }).eq("id", user.id);
     if (error) throw error;
   },
-  async updateProfile(input: { fullName: string; phone?: string; dateOfBirth?: string; homeAddress?: string; avatar?: File }) {
+  async updateProfile(input: { fullName: string; phone?: string; dateOfBirth?: string; homeAddress?: string; bankName?: string; bankAccountNumber?: string; bankAccountName?: string; avatar?: File }) {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) throw new Error("Please sign in again.");
     let avatarPath: string | undefined;
@@ -177,12 +197,18 @@ export const auth = {
       phone: string | null;
       date_of_birth: string | null;
       home_address: string | null;
+      bank_name: string | null;
+      bank_account_number: string | null;
+      bank_account_name: string | null;
       avatar_path?: string;
     } = {
       full_name: input.fullName,
       phone: input.phone || null,
       date_of_birth: input.dateOfBirth || null,
       home_address: input.homeAddress || null,
+      bank_name: input.bankName || null,
+      bank_account_number: input.bankAccountNumber || null,
+      bank_account_name: input.bankAccountName || null,
     };
     if (avatarPath) changes.avatar_path = avatarPath;
     const { error } = await supabase.from("profiles").update(changes).eq("id", user.id);
