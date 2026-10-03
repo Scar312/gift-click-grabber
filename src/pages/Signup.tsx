@@ -68,7 +68,7 @@ export default function Signup() {
     if (form.password.length < 6) return setErr("Password must be at least 6 characters.");
     setLoading(true);
     try {
-      const { data, error } = await auth.signup({ ...form, identifier: id, fullName: form.fullName.trim() });
+      const { data, error } = await auth.signup({ password: form.password, phone: form.phone, referralCode: form.referralCode, identifier: id, fullName: form.fullName.trim() });
       if (error) throw error;
       if (!data.session) {
         const { error: loginError } = await auth.login(id, form.password);
