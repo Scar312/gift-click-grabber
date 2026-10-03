@@ -62,11 +62,15 @@ export type Database = {
           account_id: string
           avatar_path: string | null
           balance_active: boolean
+          bank_account_name: string | null
+          bank_account_number: string | null
+          bank_name: string | null
           created_at: string
           current_plan_id: string | null
           current_plan_name: string | null
           current_plan_type: string | null
           date_of_birth: string | null
+          email: string | null
           full_name: string
           home_address: string | null
           id: string
@@ -83,11 +87,15 @@ export type Database = {
           account_id: string
           avatar_path?: string | null
           balance_active?: boolean
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
           created_at?: string
           current_plan_id?: string | null
           current_plan_name?: string | null
           current_plan_type?: string | null
           date_of_birth?: string | null
+          email?: string | null
           full_name?: string
           home_address?: string | null
           id: string
@@ -104,11 +112,15 @@ export type Database = {
           account_id?: string
           avatar_path?: string | null
           balance_active?: boolean
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
           created_at?: string
           current_plan_id?: string | null
           current_plan_name?: string | null
           current_plan_type?: string | null
           date_of_birth?: string | null
+          email?: string | null
           full_name?: string
           home_address?: string | null
           id?: string

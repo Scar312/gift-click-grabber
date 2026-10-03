@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { SiteLayout } from "@/components/brand/SiteLayout";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { CopyId } from "@/components/brand/CopyId";
 import { PaymentDialog, type PaymentChoice } from "@/components/brand/PaymentDialog";
 import { Wallet, TrendingUp, Award, Camera, Mail, Phone, Cake, BadgeCheck, ArrowRight } from "lucide-react";
 
@@ -19,7 +20,7 @@ export default function Dashboard() {
           <div className="glass rounded-3xl p-8 text-center">
             <h1 className="font-display text-3xl text-gradient-gold">Activate Your Account</h1>
             <p className="mt-3 text-sm text-muted-foreground">A one-time activation payment of ₦2,500 is required before you can access your dashboard. Upload your payment proof and we'll activate your account once it's confirmed.</p>
-            <div className="mt-4 text-sm">Account ID: <span className="font-mono text-gold">{user.accountId}</span></div>
+            <div className="mt-4 text-sm">Account ID: <CopyId id={user.accountId} className="font-mono text-gold" /></div>
             <button onClick={() => setPay({ id: "activation", name: "Account Activation", price: 2500, type: "outright", kind: "activation" })} className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-gold px-6 py-2.5 text-sm font-semibold text-navy-deep">Pay ₦2,500 to Activate</button>
           </div>
         </section>
@@ -30,6 +31,14 @@ export default function Dashboard() {
 
   const initials = user.fullName.split(" ").filter(Boolean).slice(0, 2).map((p) => p[0]?.toUpperCase()).join("") || "TH";
   const completion = [user.fullName, user.phone, user.dateOfBirth, user.avatarPath].filter(Boolean).length;
+  const start = new Date(user.planUpdatedAt ?? user.createdAt);
+  const due = new Date(start); due.setMonth(due.getMonth() + 11);
+  const canClaim = user.balanceActive && user.accountActivated && Boolean(user.planName) && Date.now() >= due.getTime();
+  const missing = [!(user.bankName && user.bankAccountNumber && user.bankAccountName) && "bank details", !user.dateOfBirth && "date of birth", !user.avatarPath && "profile photo"].filter(Boolean) as string[];
+  const claim = () => {
+    const msg = `Settlement claim\nAccount ID: ${user.accountId}\nPlan: ${user.planName}\nBank: ${user.bankName ?? "-"}\nAccount Number: ${user.bankAccountNumber ?? "-"}\nAccount Name: ${user.bankAccountName ?? "-"}`;
+    window.location.href = `https://wa.link/0ek13k?text=${encodeURIComponent(msg)}`;
+  };
   const completionPct = Math.round((completion / 4) * 100);
 
   return (
@@ -60,7 +69,7 @@ export default function Dashboard() {
                   <div className="text-xs uppercase tracking-widest text-muted-foreground">Welcome back</div>
                   <h1 className="mt-1 font-display text-2xl sm:text-4xl">{user.fullName}</h1>
                   <div className="mt-1 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                    <span className="rounded-full border border-gold/30 bg-gold/10 px-3 py-1 font-mono text-[11px] text-gold">#{user.accountId}</span>
+                    <CopyId id={user.accountId} prefix="#" className="rounded-full border border-gold/30 bg-gold/10 px-3 py-1 font-mono text-[11px] text-gold" />
                     <span className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1 text-[11px] text-muted-foreground">
                       <BadgeCheck className="h-3.5 w-3.5 text-gold" /> {user.planName ? user.planStatus ?? "Active" : "No plan yet"}
                     </span>
@@ -98,6 +107,23 @@ export default function Dashboard() {
           </div>
         </div>
 
+        <div className="mt-8 glass rounded-3xl border border-gold/30 p-6 sm:p-8">
+          <div className="text-xs uppercase tracking-widest text-gold">Announcement</div>
+          <h2 className="mt-1 font-display text-2xl text-gradient-gold">New Benefit Update</h2>
+          <ul className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
+            {["Outright Food Investment: 10% cashback at settlement", "Plan B Savings: 10% cashback at settlement", "6-month Outright Savings: 30% interest", "12-month Plan B: 45% interest"].map((b) => (
+              <li key={b} className="flex gap-2"><BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-gold" />{b}</li>
+            ))}
+          </ul>
+          <div className="mt-4 rounded-2xl border border-gold/20 bg-gold/5 p-4 text-sm">
+            <strong className="text-gold">December Protein</strong> — ₦100,000 Big Goat · ₦50,000 for 3 Big Broilers · ₦50,000 for 7 Big Layers, payable in 2 installments.
+            <Link to="/plans#december-protein" className="ml-2 text-gold underline">Pick one</Link>
+          </div>
+          {missing.length > 0 && (
+            <p className="mt-4 text-sm text-muted-foreground">Reminder: please add your {missing.join(", ")} on your <Link to="/profile" className="text-gold underline">profile</Link>.</p>
+          )}
+        </div>
+
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           {[
             { i: Wallet, t: "Wallet Balance", v: `₦${user.walletBalance.toLocaleString()}` },
@@ -122,6 +148,9 @@ export default function Dashboard() {
           <Link to="/plans" className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-gold px-6 py-2.5 text-sm font-semibold text-navy-deep">
             {user.planName ? "Change or Add Plan" : "Browse Plans"}
           </Link>
+          {canClaim && (
+            <button onClick={claim} className="ml-3 mt-6 inline-flex items-center gap-2 rounded-full border border-gold/40 px-6 py-2.5 text-sm font-semibold text-gold hover:bg-gold/10">Claim Settlement</button>
+          )}
         </div>
       </section>
     </SiteLayout>

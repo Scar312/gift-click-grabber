@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { auth } from "@/lib/auth";
+import { auth, isEmail, phoneDigits } from "@/lib/auth";
 import { Logo } from "@/components/brand/Logo";
 import { Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -63,17 +63,18 @@ export default function Signup() {
     setErr(null);
     setInfo(null);
     if (!form.fullName.trim()) return setErr("Please enter your full name.");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return setErr("Please enter a valid email address.");
+    const id = form.email.trim();
+    if (!isEmail(id) && phoneDigits(id).length < 10) return setErr("Enter a valid email address or phone number.");
     if (form.password.length < 6) return setErr("Password must be at least 6 characters.");
     setLoading(true);
     try {
-      const { data, error } = await auth.signup({ ...form, email: form.email.trim(), fullName: form.fullName.trim() });
+      const { data, error } = await auth.signup({ password: form.password, phone: form.phone, referralCode: form.referralCode, identifier: id, fullName: form.fullName.trim() });
       if (error) throw error;
-      if (data.session) navigate("/dashboard");
-      else {
-        setStage("verify");
-        setInfo(`We sent a verification code to ${form.email.trim()}.`);
+      if (!data.session) {
+        const { error: loginError } = await auth.login(id, form.password);
+        if (loginError) throw loginError;
       }
+      navigate("/dashboard");
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Sign up failed.");
     } finally {
@@ -155,8 +156,8 @@ export default function Signup() {
       ) : (
         <form onSubmit={submit} className="space-y-4">
           <Field label="Full Name" value={form.fullName} onChange={(v) => setForm({ ...form, fullName: v })} required />
-          <Field label="Email Address" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
-          <Field label="Phone Number" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} placeholder="+234 ..." />
+          <Field label="Email or Phone Number" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
+          {isEmail(form.email) && <Field label="Phone Number" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} placeholder="+234 ..." />}
           <Field label="Referral Code (optional)" value={form.referralCode} onChange={(v) => setForm({ ...form, referralCode: v })} placeholder="e.g. THV000123" />
           <div>
             <label className="text-xs uppercase tracking-widest text-muted-foreground">Password</label>

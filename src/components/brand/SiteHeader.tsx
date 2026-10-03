@@ -1,4 +1,5 @@
-import { Link, NavLink } from "react-router-dom";
+import { CopyId } from "@/components/brand/CopyId";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Menu, X, LogIn, UserPlus, LayoutDashboard, UserRound, ShieldCheck, Gift, TrendingUp } from "lucide-react";
 import { Logo } from "./Logo";
@@ -17,6 +18,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 20);
@@ -114,7 +116,7 @@ export function SiteHeader() {
             <div className="flex flex-col gap-2">
               <div className="px-3 py-1.5 text-xs text-muted-foreground">
                 Signed in as <span className="text-gold">{user.fullName}</span>
-                <div className="font-mono text-[10px] text-muted-foreground/70">#{user.accountId}</div>
+                <CopyId id={user.accountId} prefix="#" className="font-mono text-[10px] text-muted-foreground/70" />
               </div>
               <Link
                 to="/dashboard"
@@ -128,7 +130,7 @@ export function SiteHeader() {
               <Link to="/referrals" onClick={() => setOpen(false)} className="flex items-center justify-center gap-2 rounded-full border border-gold/40 px-4 py-2.5 text-sm text-gold"><Gift className="h-4 w-4" /> Referral Program</Link>
               <Link to="/upgrade" onClick={() => setOpen(false)} className="flex items-center justify-center gap-2 rounded-full border border-gold/40 px-4 py-2.5 text-sm text-gold"><TrendingUp className="h-4 w-4" /> Upgrade Plan</Link>
               <button
-                onClick={() => { void auth.logout(); setOpen(false); }}
+                onClick={async () => { setOpen(false); await auth.logout(); navigate("/", { replace: true }); window.location.reload(); }}
                 className="rounded-full border border-border px-4 py-2.5 text-sm"
               >
                 Logout

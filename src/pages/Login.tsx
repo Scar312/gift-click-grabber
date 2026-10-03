@@ -48,7 +48,7 @@ export default function Login() {
   return (
     <AuthShell title="Welcome back" subtitle="Sign in to continue your treasure hunt.">
       <form onSubmit={submit} className="space-y-4">
-        <Field label="Email Address" type="email" value={email} onChange={setEmail} required />
+        <Field label="Email or Phone Number" value={email} onChange={setEmail} required />
         <div>
           <label className="text-xs uppercase tracking-widest text-muted-foreground">Password</label>
           <div className="mt-1.5 relative">
