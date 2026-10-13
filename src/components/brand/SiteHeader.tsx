@@ -93,8 +93,8 @@ export function SiteHeader() {
       </div>
 
       <div
-        className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${user ? "" : "lg:hidden"} ${
-          open ? "max-h-[600px]" : "max-h-0"
+        className={`transition-[max-height] duration-300 ease-in-out overscroll-contain ${user ? "" : "lg:hidden"} ${
+          open ? "max-h-[calc(100dvh-4rem)] overflow-y-auto" : "max-h-0 overflow-hidden"
         }`}
       >
         <div className="mx-4 mb-4 rounded-2xl border border-gold/20 bg-card/95 p-5 backdrop-blur-xl lg:ml-auto lg:mr-6 lg:max-w-sm">
