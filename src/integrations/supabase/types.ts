@@ -61,6 +61,7 @@ export type Database = {
           account_activated: boolean
           account_id: string
           avatar_path: string | null
+          balance_activated_at: string | null
           balance_active: boolean
           bank_account_name: string | null
           bank_account_number: string | null
@@ -79,6 +80,7 @@ export type Database = {
           plan_updated_at: string | null
           referral_code: string | null
           referred_by: string | null
+          settlement_month: string | null
           updated_at: string
           wallet_balance: number
         }
@@ -86,6 +88,7 @@ export type Database = {
           account_activated?: boolean
           account_id: string
           avatar_path?: string | null
+          balance_activated_at?: string | null
           balance_active?: boolean
           bank_account_name?: string | null
           bank_account_number?: string | null
@@ -104,6 +107,7 @@ export type Database = {
           plan_updated_at?: string | null
           referral_code?: string | null
           referred_by?: string | null
+          settlement_month?: string | null
           updated_at?: string
           wallet_balance?: number
         }
@@ -111,6 +115,7 @@ export type Database = {
           account_activated?: boolean
           account_id?: string
           avatar_path?: string | null
+          balance_activated_at?: string | null
           balance_active?: boolean
           bank_account_name?: string | null
           bank_account_number?: string | null
@@ -129,6 +134,7 @@ export type Database = {
           plan_updated_at?: string | null
           referral_code?: string | null
           referred_by?: string | null
+          settlement_month?: string | null
           updated_at?: string
           wallet_balance?: number
         }
