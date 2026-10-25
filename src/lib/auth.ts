@@ -19,6 +19,8 @@ export type User = {
   referralCode: string;
   walletBalance: number;
   balanceActive: boolean;
+  balanceActivatedAt?: string;
+  settlementMonth?: string;
   referralCount: number;
   accountActivated: boolean;
   bankName?: string;
@@ -62,7 +64,7 @@ async function loadCurrentUser(): Promise<User | null> {
   if (error || !user) return null;
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("account_id, full_name, phone, date_of_birth, home_address, avatar_path, created_at, current_plan_id, current_plan_name, current_plan_type, plan_status, plan_updated_at, referral_code, wallet_balance, balance_active, account_activated, email, bank_name, bank_account_number, bank_account_name")
+    .select("account_id, full_name, phone, date_of_birth, home_address, avatar_path, created_at, current_plan_id, current_plan_name, current_plan_type, plan_status, plan_updated_at, referral_code, wallet_balance, balance_active, balance_activated_at, settlement_month, account_activated, email, bank_name, bank_account_number, bank_account_name")
     .eq("id", user.id)
     .maybeSingle();
   if (profileError || !profile) return null;
@@ -91,6 +93,8 @@ async function loadCurrentUser(): Promise<User | null> {
     referralCode: profile.referral_code ?? profile.account_id.replace("-", ""),
     walletBalance: Number(profile.wallet_balance ?? 0),
     balanceActive: Boolean(profile.balance_active),
+    balanceActivatedAt: profile.balance_activated_at ?? undefined,
+    settlementMonth: profile.settlement_month ?? undefined,
     referralCount: count ?? 0,
     accountActivated: Boolean(profile.account_activated),
     bankName: profile.bank_name ?? undefined,
@@ -181,7 +185,7 @@ export const auth = {
     }).eq("id", user.id);
     if (error) throw error;
   },
-  async updateProfile(input: { fullName: string; phone?: string; dateOfBirth?: string; homeAddress?: string; bankName?: string; bankAccountNumber?: string; bankAccountName?: string; avatar?: File }) {
+  async updateProfile(input: { fullName: string; phone?: string; dateOfBirth?: string; homeAddress?: string; bankName?: string; bankAccountNumber?: string; bankAccountName?: string; settlementMonth?: string; avatar?: File }) {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) throw new Error("Please sign in again.");
     let avatarPath: string | undefined;
@@ -200,6 +204,7 @@ export const auth = {
       bank_name: string | null;
       bank_account_number: string | null;
       bank_account_name: string | null;
+      settlement_month?: string;
       avatar_path?: string;
     } = {
       full_name: input.fullName,
@@ -210,6 +215,7 @@ export const auth = {
       bank_account_number: input.bankAccountNumber || null,
       bank_account_name: input.bankAccountName || null,
     };
+    if (input.settlementMonth) changes.settlement_month = input.settlementMonth;
     if (avatarPath) changes.avatar_path = avatarPath;
     const { error } = await supabase.from("profiles").update(changes).eq("id", user.id);
     if (error) throw error;

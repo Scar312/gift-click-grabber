@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792940001596,
+      "tag": "0000_balance_activated_at_settlement_month",
+      "breakpoints": true
+    }
+  ]
+}
