@@ -10,6 +10,8 @@ import { Wallet, TrendingUp, Award, Camera, Mail, Phone, Cake, BadgeCheck, Arrow
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const [pay, setPay] = useState<PaymentChoice | null>(null);
+  const [settlePick, setSettlePick] = useState<string | null>(null);
+  const [settleStatus, setSettleStatus] = useState("");
 
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
@@ -40,6 +42,24 @@ export default function Dashboard() {
     window.location.href = `https://wa.link/0ek13k?text=${encodeURIComponent(msg)}`;
   };
   const completionPct = Math.round((completion / 4) * 100);
+  const activationAt = user.balanceActivatedAt ? new Date(user.balanceActivatedAt) : null;
+  const settlementDue = activationAt ? new Date(activationAt) : null;
+  if (settlementDue) settlementDue.setMonth(settlementDue.getMonth() + 11);
+  const canChangeSettlement = Boolean(settlementDue && Date.now() >= settlementDue.getTime());
+  const settlementMonthLabel = user.settlementMonth
+    ? new Date(`${user.settlementMonth}T00:00:00`).toLocaleDateString(undefined, { month: "long", year: "numeric" })
+    : "Not set";
+  const saveSettlementMonth = async () => {
+    if (!settlePick) return;
+    setSettleStatus("Saving...");
+    try {
+      await auth.updateProfile({ fullName: user.fullName, settlementMonth: settlePick });
+      setSettleStatus("Settlement month updated.");
+      setTimeout(() => window.location.reload(), 700);
+    } catch (error) {
+      setSettleStatus(error instanceof Error ? error.message : "Could not update settlement month.");
+    }
+  };
 
   return (
     <SiteLayout>
@@ -152,6 +172,45 @@ export default function Dashboard() {
             <button onClick={claim} className="ml-3 mt-6 inline-flex items-center gap-2 rounded-full border border-gold/40 px-6 py-2.5 text-sm font-semibold text-gold hover:bg-gold/10">Claim Settlement</button>
           )}
         </div>
+
+        {user.balanceActive && user.balanceActivatedAt && settlementDue && (
+          <div className="mt-8 glass rounded-3xl border border-gold/30 p-6 sm:p-8">
+            <div className="text-xs uppercase tracking-widest text-gold">Settlement</div>
+            <h2 className="mt-1 font-display text-2xl text-gradient-gold">Settlement Month</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Set 11 months after your balance was activated on {activationAt!.toLocaleDateString()}.
+            </p>
+            <div className="mt-3 font-display text-xl text-gradient-gold">{settlementMonthLabel}</div>
+            {canChangeSettlement ? (
+              settlePick === null ? (
+                <button
+                  onClick={() => setSettlePick((user.settlementMonth ?? "").slice(0, 7))}
+                  className="mt-4 inline-flex items-center gap-2 rounded-full border border-gold/40 px-6 py-2.5 text-sm font-semibold text-gold hover:bg-gold/10"
+                >
+                  Change Settlement Month
+                </button>
+              ) : (
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <input
+                    type="month"
+                    value={settlePick}
+                    min={settlementDue.toISOString().slice(0, 7)}
+                    onChange={(e) => setSettlePick(e.target.value)}
+                    className="rounded-xl border border-border bg-input/40 px-4 py-2.5 text-sm text-foreground outline-none focus:border-gold/60"
+                    aria-label="New settlement month"
+                  />
+                  <button onClick={saveSettlementMonth} className="rounded-full bg-gradient-gold px-5 py-2.5 text-sm font-semibold text-navy-deep">Save</button>
+                  <button onClick={() => { setSettlePick(null); setSettleStatus(""); }} className="rounded-full border border-border px-5 py-2.5 text-sm text-muted-foreground">Cancel</button>
+                </div>
+              )
+            ) : (
+              <p className="mt-3 text-sm text-muted-foreground">
+                Changing your settlement month becomes available from {settlementDue.toLocaleDateString()}.
+              </p>
+            )}
+            {settleStatus && <p className="mt-3 text-sm text-muted-foreground">{settleStatus}</p>}
+          </div>
+        )}
       </section>
     </SiteLayout>
   );
