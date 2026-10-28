@@ -215,7 +215,7 @@ export const auth = {
       bank_account_number: input.bankAccountNumber || null,
       bank_account_name: input.bankAccountName || null,
     };
-    if (input.settlementMonth) changes.settlement_month = input.settlementMonth;
+    if (input.settlementMonth) changes.settlement_month = input.settlementMonth.length === 7 ? `${input.settlementMonth}-01` : input.settlementMonth;
     if (avatarPath) changes.avatar_path = avatarPath;
     const { error } = await supabase.from("profiles").update(changes).eq("id", user.id);
     if (error) throw error;
