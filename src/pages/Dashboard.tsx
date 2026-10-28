@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import { SiteLayout } from "@/components/brand/SiteLayout";
 import { useState } from "react";
-import { useAuth } from "@/lib/auth";
+import { auth, useAuth } from "@/lib/auth";
 import { CopyId } from "@/components/brand/CopyId";
 import { PaymentDialog, type PaymentChoice } from "@/components/brand/PaymentDialog";
 import { Wallet, TrendingUp, Award, Camera, Mail, Phone, Cake, BadgeCheck, ArrowRight } from "lucide-react";
