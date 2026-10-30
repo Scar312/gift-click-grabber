@@ -2,15 +2,19 @@ import { Link } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import { SiteLayout } from "@/components/brand/SiteLayout";
 import { useState } from "react";
+import { format } from "date-fns";
 import { auth, useAuth } from "@/lib/auth";
 import { CopyId } from "@/components/brand/CopyId";
 import { PaymentDialog, type PaymentChoice } from "@/components/brand/PaymentDialog";
-import { Wallet, TrendingUp, Award, Camera, Mail, Phone, Cake, BadgeCheck, ArrowRight } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Wallet, TrendingUp, Award, Camera, Mail, Phone, Cake, BadgeCheck, ArrowRight, CalendarIcon } from "lucide-react";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const [pay, setPay] = useState<PaymentChoice | null>(null);
-  const [settlePick, setSettlePick] = useState<string | null>(null);
+  const [settleOpen, setSettleOpen] = useState(false);
+  const [settleDate, setSettleDate] = useState<Date | undefined>(undefined);
   const [settleStatus, setSettleStatus] = useState("");
 
   if (loading) return null;
@@ -45,15 +49,19 @@ export default function Dashboard() {
   const activationAt = user.balanceActivatedAt ? new Date(user.balanceActivatedAt) : null;
   const settlementDue = activationAt ? new Date(activationAt) : null;
   if (settlementDue) settlementDue.setMonth(settlementDue.getMonth() + 11);
-  const canChangeSettlement = Boolean(settlementDue && Date.now() >= settlementDue.getTime());
+  // Earliest selectable settlement date: exactly 11 months after this member's balance activation.
+  const settleEligible = settlementDue
+    ? new Date(settlementDue.getFullYear(), settlementDue.getMonth(), settlementDue.getDate())
+    : null;
+  const canChangeSettlement = Boolean(settleEligible && Date.now() >= settleEligible.getTime());
   const settlementMonthLabel = user.settlementMonth
-    ? new Date(`${user.settlementMonth}T00:00:00`).toLocaleDateString(undefined, { month: "long", year: "numeric" })
+    ? new Date(`${user.settlementMonth}T00:00:00`).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })
     : "Not set";
   const saveSettlementMonth = async () => {
-    if (!settlePick) return;
+    if (!settleDate) return;
     setSettleStatus("Saving...");
     try {
-      await auth.updateProfile({ fullName: user.fullName, settlementMonth: settlePick });
+      await auth.updateProfile({ fullName: user.fullName, settlementMonth: format(settleDate, "yyyy-MM-dd") });
       setSettleStatus("Settlement month updated.");
       setTimeout(() => window.location.reload(), 700);
     } catch (error) {
@@ -167,25 +175,39 @@ export default function Dashboard() {
             </p>
             <div className="mt-3 font-display text-xl text-gradient-gold">{settlementMonthLabel}</div>
             {canChangeSettlement ? (
-              settlePick === null ? (
-                <button
-                  onClick={() => setSettlePick((user.settlementMonth ?? "").slice(0, 7))}
-                  className="mt-4 inline-flex items-center gap-2 rounded-full border border-gold/40 px-6 py-2.5 text-sm font-semibold text-gold hover:bg-gold/10"
-                >
-                  Change Settlement Month
-                </button>
+              settleDate === undefined ? (
+                <div className="mt-4">
+                  <Popover open={settleOpen} onOpenChange={setSettleOpen}>
+                    <PopoverTrigger asChild>
+                      <button className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-6 py-2.5 text-sm font-semibold text-gold hover:bg-gold/10">
+                        <CalendarIcon className="h-4 w-4" /> Pick Settlement Month
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={settleDate}
+                        onSelect={(d) => { setSettleDate(d); setSettleOpen(false); }}
+                        disabled={(date) => (settleEligible ? date < settleEligible : false)}
+                        defaultMonth={settleEligible ?? undefined}
+                        initialFocus
+                        className="p-3 pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  {settleEligible && !canChangeSettlement && (
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      Dates before {settleEligible.toLocaleDateString()} stay disabled until your 11-month period ends.
+                    </p>
+                  )}
+                </div>
               ) : (
                 <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <input
-                    type="month"
-                    value={settlePick}
-                    min={settlementDue.toISOString().slice(0, 7)}
-                    onChange={(e) => setSettlePick(e.target.value)}
-                    className="rounded-xl border border-border bg-input/40 px-4 py-2.5 text-sm text-foreground outline-none focus:border-gold/60"
-                    aria-label="New settlement month"
-                  />
+                  <div className="rounded-xl border border-gold/40 bg-gold/10 px-4 py-2.5 text-sm text-gold">
+                    {format(settleDate!, "PPP")}
+                  </div>
                   <button onClick={saveSettlementMonth} className="rounded-full bg-gradient-gold px-5 py-2.5 text-sm font-semibold text-navy-deep">Save</button>
-                  <button onClick={() => { setSettlePick(null); setSettleStatus(""); }} className="rounded-full border border-border px-5 py-2.5 text-sm text-muted-foreground">Cancel</button>
+                  <button onClick={() => { setSettleDate(undefined); setSettleStatus(""); }} className="rounded-full border border-border px-5 py-2.5 text-sm text-muted-foreground">Cancel</button>
                 </div>
               )
             ) : (
