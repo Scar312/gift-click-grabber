@@ -174,46 +174,40 @@ export default function Dashboard() {
               Set 11 months after your balance was activated on {activationAt!.toLocaleDateString()}.
             </p>
             <div className="mt-3 font-display text-xl text-gradient-gold">{settlementMonthLabel}</div>
-            {canChangeSettlement ? (
-              settleDate === undefined ? (
-                <div className="mt-4">
-                  <Popover open={settleOpen} onOpenChange={setSettleOpen}>
-                    <PopoverTrigger asChild>
-                      <button className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-6 py-2.5 text-sm font-semibold text-gold hover:bg-gold/10">
-                        <CalendarIcon className="h-4 w-4" /> Pick Settlement Month
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={settleDate}
-                        onSelect={(d) => { setSettleDate(d); setSettleOpen(false); }}
-                        disabled={(date) => (settleEligible ? date < settleEligible : false)}
-                        defaultMonth={settleEligible ?? undefined}
-                        initialFocus
-                        className="p-3 pointer-events-auto"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  {settleEligible && !canChangeSettlement && (
-                    <p className="mt-3 text-sm text-muted-foreground">
-                      Dates before {settleEligible.toLocaleDateString()} stay disabled until your 11-month period ends.
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <div className="rounded-xl border border-gold/40 bg-gold/10 px-4 py-2.5 text-sm text-gold">
-                    {format(settleDate!, "PPP")}
-                  </div>
-                  <button onClick={saveSettlementMonth} className="rounded-full bg-gradient-gold px-5 py-2.5 text-sm font-semibold text-navy-deep">Save</button>
-                  <button onClick={() => { setSettleDate(undefined); setSettleStatus(""); }} className="rounded-full border border-border px-5 py-2.5 text-sm text-muted-foreground">Cancel</button>
-                </div>
-              )
+            {settleDate === undefined ? (
+              <div className="mt-4">
+                <Popover open={settleOpen} onOpenChange={setSettleOpen}>
+                  <PopoverTrigger asChild>
+                    <button className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-6 py-2.5 text-sm font-semibold text-gold hover:bg-gold/10">
+                      <CalendarIcon className="h-4 w-4" /> Pick Settlement Month
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={settleDate}
+                      onSelect={(d) => { setSettleDate(d); setSettleOpen(false); }}
+                      disabled={(date) => (settleEligible ? date < settleEligible : false)}
+                      defaultMonth={settleEligible ?? undefined}
+                      initialFocus
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+                {settleEligible && !canChangeSettlement && (
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    Your earliest settlement date is {settleEligible.toLocaleDateString()} — earlier dates stay disabled until your 11-month period ends.
+                  </p>
+                )}
+              </div>
             ) : (
-              <p className="mt-3 text-sm text-muted-foreground">
-                Changing your settlement month becomes available from {settlementDue.toLocaleDateString()}.
-              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <div className="rounded-xl border border-gold/40 bg-gold/10 px-4 py-2.5 text-sm text-gold">
+                  {format(settleDate!, "PPP")}
+                </div>
+                <button onClick={saveSettlementMonth} className="rounded-full bg-gradient-gold px-5 py-2.5 text-sm font-semibold text-navy-deep">Save</button>
+                <button onClick={() => { setSettleDate(undefined); setSettleStatus(""); }} className="rounded-full border border-border px-5 py-2.5 text-sm text-muted-foreground">Cancel</button>
+              </div>
             )}
             {settleStatus && <p className="mt-3 text-sm text-muted-foreground">{settleStatus}</p>}
           </div>
