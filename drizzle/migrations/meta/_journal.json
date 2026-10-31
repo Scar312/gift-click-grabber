@@ -8,6 +8,13 @@
       "when": 1792940001596,
       "tag": "0000_balance_activated_at_settlement_month",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793460530212,
+      "tag": "0001_relax_settlement_guard",
+      "breakpoints": true
     }
   ]
 }
